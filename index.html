@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmic Tendency | Neon Magic</title>
-    <!-- フォントの読み込み -->
+    
+    <!-- PWA / モバイルアプリ設定 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!-- フォント -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --neon-pink: #ff00ff;
             --neon-cyan: #00ffff;
             --magic-purple: #9d00ff;
-            /* 背景を完全に透明に設定 */
             --glass-bg: transparent; 
         }
 
@@ -36,12 +43,21 @@
             overflow-x: hidden;
         }
 
+        /* 背景の星屑アニメーション用キャンバス */
+        #star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .glass-card {
             background: var(--glass-bg);
-            /* すりガラス効果(blur)を削除して完全透明に */
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
-            /* 枠線と影を削除 */
             border: none;
             box-shadow: none;
             padding: 20px;
@@ -89,7 +105,7 @@
             padding: 12px 15px; 
             border-radius: 12px; 
             border: 1px solid rgba(255,255,255,0.4);
-            background: rgba(0, 0, 0, 0.6); /* 入力しやすさのため入力欄のみ透過黒 */
+            background: rgba(0, 0, 0, 0.6);
             color: #fff; 
             font-size: 16px;
             transition: all 0.3s;
@@ -133,22 +149,19 @@
             transition: all 0.3s;
         }
         .sound-toggle.muted { border-color: #555; color: #555; }
-        .sound-toggle:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
-
-        .sound-notice { font-size: 11px; color: #fff; text-shadow: 0 0 5px #000; }
 
         .btn-reset {
             width: 100%; padding: 10px; margin-top: 30px; border-radius: 10px;
             background: transparent; border: 1px solid rgba(255,255,255,0.3);
             color: #fff; cursor: pointer; font-size: 12px;
             transition: all 0.3s;
-            text-shadow: 0 0 5px #000;
         }
 
         /* --- 結果表示 --- */
-        #result-display { display: none; animation: result-in 0.8s ease-out; }
+        #result-display { display: none; }
+        .fade-in { animation: result-in 0.8s ease-out forwards; }
         @keyframes result-in {
-            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
@@ -166,38 +179,34 @@
         .details-list li { margin-bottom: 15px; color: #fff; font-size: 1.1rem; display: flex; align-items: center; text-shadow: 1px 1px 3px #000; }
         .details-list li::before { content: '✦'; color: var(--neon-cyan); margin-right: 12px; }
 
-        /* --- モバイル対応修正 --- */
+        /* シェアボタン */
+        .share-btn {
+            margin-top: 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            font-family: inherit;
+        }
+        .share-btn:hover { background: var(--neon-cyan); color: #000; }
+
         @media (max-width: 700px) {
-            .glass-card { 
-                flex-direction: column; 
-                padding: 20px; 
-                width: 100%;
-                box-sizing: border-box;
-            }
-            .left-panel { 
-                min-width: 0; 
-                width: 100%; 
-                padding: 0;
-            }
-            .right-panel { 
-                min-width: 0;
-                width: 100%;
-                border-left: none; 
-                border-top: 1px solid rgba(255,255,255,0.3); 
-                padding-left: 0; 
-                padding-top: 30px; 
-            }
-            input, .btn, .btn-reset {
-                width: 100%; 
-                box-sizing: border-box;
-            }
-            h1 { font-size: 1.8rem; }
+            .glass-card { flex-direction: column; }
+            .right-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.3); padding-left: 0; padding-top: 30px; }
         }
 
         #counter { font-size: 12px; color: var(--neon-pink); margin-bottom: 10px; font-weight: bold; text-shadow: 0 0 5px #000; }
     </style>
 </head>
 <body>
+    <!-- 背景アニメーション用 -->
+    <canvas id="star-canvas"></canvas>
+
     <div class="glass-card">
         <div class="left-panel">
             <div id="counter"></div>            
@@ -230,6 +239,7 @@
                 <h2 class="tagline" id="res-tagline"></h2>
                 <div class="quote-box" id="res-quote"></div>
                 <ul id="res-details" class="details-list"></ul>
+                <button class="share-btn" onclick="shareX()">この結果を空に放つ (Xでシェア)</button>
             </div>
         </div>
     </div>
@@ -237,6 +247,41 @@
     <audio id="bgm" src="bgm.mp3" loop></audio>
 
     <script>
+        /* --- 背景アニメーションロジック --- */
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<100; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.1,
+                    opacity: Math.random()
+                });
+            }
+        }
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            stars.forEach(s => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+                s.y -= s.speed;
+                if(s.y < 0) s.y = canvas.height;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        window.addEventListener('resize', initStars);
+        initStars();
+        drawStars();
+
+        /* --- 診断データ --- */
         const fortuneData = [
             { "sun": "牡羊座", "moon": "牡羊座", "tagline": "即決即行動タイプ", "details": ["思った瞬間に動く", "感情も行動も直球", "後悔は後から"], "quote": "今やろ" },
             { "sun": "牡羊座", "moon": "牡牛座", "tagline": "突っ走りたいのに慎重タイプ", "details": ["行動力と不安が共存", "挑戦したいけど安定も欲しい"], "quote": "やりたいけど怖い" },
@@ -267,7 +312,7 @@
             { "sun": "双子座", "moon": "双子座", "tagline": "歩く検索エンジン", "details": ["常に何かを調べている", "同時に3つくらいのことをこなす", "深掘りより広さ重視"], "quote": "あ、それ知ってる！" },
             { "sun": "双子座", "moon": "蟹座", "tagline": "愛嬌のある聞き上手", "details": ["相手の感情を読み取って喋る", "仲間内のニュースが大好き", "実はかなり心配性"], "quote": "ここだけの話やけど" },
             { "sun": "双子座", "moon": "獅子座", "tagline": "華やかなエンターテイナー", "details": ["自分の話を面白く盛る天才", "目立ちたいけど軽やか", "褒められると調子に乗る"], "quote": "凄いやろ？" },
-            { "sun": "雙子座", "moon": "乙女座", "tagline": "精密な分析官", "details": ["細かい矛盾も見逃さない", "知識の整理整頓が趣味", "言葉選びがシビア"], "quote": "正確にはこうやで" },
+            { "sun": "双子座", "moon": "乙女座", "tagline": "精密な分析官", "details": ["細かい矛盾も見逃さない", "知識の整理整頓が趣味", "言葉選びがシビア"], "quote": "正確にはこうやで" },
             { "sun": "双子座", "moon": "天秤座", "tagline": "社交界の調整役", "details": ["誰とでも話を合わせられる", "争いを避けるためのトーク術", "決断は周りに任せがち"], "quote": "みんなはどう思う？" },
             { "sun": "双子座", "moon": "蠍座", "tagline": "鋭い洞察力の探偵", "details": ["表面的な会話の下を探る", "秘密主義なのに情報はしっかり収集", "言葉の端々に毒とユーモアが混じる"], "quote": "ホンマは違うやろ？" },
             { "sun": "双子座", "moon": "射手座", "tagline": "思考が宇宙規模の旅人", "details": ["常に新しい世界を求めている", "小さなことは気にしない", "どこへでも飛んでいく"], "quote": "どっか行こう！" },
@@ -316,11 +361,11 @@
             { "sun": "天秤座", "moon": "蟹座", "tagline": "愛され上手な気配り屋", "details": ["周囲の感情の変化に敏感", "誰からも嫌われたくないし、みんなで仲良くしたい", "身内への愛と外への愛想の使い分け"], "quote": "みんな仲良くね" },
             { "sun": "天秤座", "moon": "獅子座", "tagline": "華やかな社交界のスター", "details": ["褒められることで輝きを増す", "自分がどう見えているかを常に計算", "センスの良さには絶対の自信"], "quote": "素敵でしょ？" },
             { "sun": "天秤座", "moon": "乙女座", "tagline": "スマートな完璧主義者", "details": ["表向きはソフトだが、内面は超分析的", "マナーや身だしなみに厳しい", "場の空気を整えるのが上手"], "quote": "失礼がないように" },
-            { "sun": "天秤座", "moon": "天秤座", "tagline": "調和を愛する平和の使者", "details": ["12星座イチ、空気を読むのが得意", "どちらの味方もしたくない（板挟みになりがち）", "優柔不断は「公平」でありたい証拠"], "quote": "どっちも良いよね" },
+            { "sun": "天秤座", "moon": "天秤座", "tagline": "調和を愛する平和の使者", "details": ["12星座イチ、空気を読むのが得意", "どちらの味方もしたくない（板挟みになりがち）", "優憂不断は「公平」でありたい証拠"], "quote": "どっちも良いよね" },
             { "sun": "天秤座", "moon": "蠍座", "tagline": "秘密を抱えた社交家", "details": ["誰とでも仲良くするが、本心は一握りの人にだけ", "観察眼が鋭く、相手の本音を見抜く", "執念深さを笑顔で隠す"], "quote": "（…見てるよ）" },
             { "sun": "天秤座", "moon": "射手座", "tagline": "自由を愛する楽天家", "details": ["社交的だけど束縛されるのは大嫌い", "フットワークが軽く、新しい出会いを求める", "重たい空気を感じると逃げたくなる"], "quote": "もっと楽しくいこう！" },
             { "sun": "天秤座", "moon": "山羊座", "tagline": "真面目な野心家", "details": ["人間関係をキャリアや実績に繋げる", "礼儀正しく、目上の人に好かれる", "意外と現実的で計算高い"], "quote": "きちんとしなきゃ" },
-            { "sun": "天秤座", "moon": "水瓶座", "tagline": "クールで友好的な異端児", "details": ["誰に対しても平等、かつ一定の距離感", "ユニークなセンスで注目を浴びる", "依存関係を嫌う爽やかな個人主義"], "quote": "自由が一番やん" },
+            { "sun": "天秤座", "moon": "水瓶座", "tagline": "クールで友好的な異端児", "details": ["誰に対しても平等、かつ一定の距離感", "ユニークなセンスで注目を浴びる", "依存関係を最も嫌う"], "quote": "自由が一番やん" },
             { "sun": "天秤座", "moon": "魚座", "tagline": "流されやすい癒し系", "details": ["相手の希望を叶えることが自分の喜び", "境界線が曖昧で、つい優しくしすぎる", "ドラマチックなロマンスに弱い"], "quote": "どっちでもいいよ" },
             { "sun": "蠍座", "moon": "牡羊座", "tagline": "不屈の精神を持つ戦士", "details": ["狙った獲物は逃さない", "怒らせると12星座イチ執念深い", "圧倒的な集中力と瞬発力"], "quote": "覚悟しときや" },
             { "sun": "蠍座", "moon": "牡牛座", "tagline": "究極のこだわり派", "details": ["独占欲と所有欲が最強", "好きなものは一生愛し抜く", "変化を嫌い、自分の世界を突き詰める"], "quote": "絶対に離さない" },
@@ -380,12 +425,13 @@
             { "sun": "魚座", "moon": "蠍座", "tagline": "底知れぬ愛を秘めた人", "details": ["好きになったら魂レベルで一体化したい", "洞察力が鋭く、言葉以外のメッセージを読む", "執念深さと慈悲深さが同居する"], "quote": "ずっと繋がってる" },
             { "sun": "魚座", "moon": "射手座", "tagline": "どこまでも行く夢追い人", "details": ["現実逃避がそのまま冒険になる", "精神的な自由を求めて彷徨う", "楽天的なようで、ふと寂しがる"], "quote": "どこか遠くへ行きたい" },
             { "sun": "魚座", "moon": "山羊座", "tagline": "夢を形にする努力家", "details": ["ふわふわしているようで、最後は着地する", "責任感が強く、頼まれると断れない", "現実的な厳しさを知っている魚座"], "quote": "やれるだけやるよ" },
-            { "sun": "魚座", "moon": "水瓶座", "tagline": "不思議な魅力の博愛主義者", "details": ["誰に対しても優しいが、どこか掴めない", "独特な感性で世界を捉えている", "孤独を愛する、自由な癒やし系"], "quote": "みんな違っていいやん" },
+            { "sun": "魚座", "moon": "水瓶座", "tagline": "不思議な魅力の癒し系", "details": ["誰に対しても優しいが、どこか掴めない", "独特な感性で世界を捉えている", "孤独を愛する、自由な癒やし系"], "quote": "みんな違っていいやん" },
             { "sun": "魚座", "moon": "魚座", "tagline": "境界線のない純粋な魂", "details": ["感情の海を漂う、生粋の感性の人", "霊感や直感が日常レベルで鋭い", "全てを受け入れる圧倒的な受容力"], "quote": "なんとかなるよ" }
         ];
 
         const zodiacSigns = ["牡羊座", "牡牛座", "双子座", "蟹座", "獅子座", "乙女座", "天秤座", "蠍座", "射手座", "山羊座", "水瓶座", "魚座"];
 
+        /* --- 星座ロジック --- */
         function getSunSign(date) {
             const m = date.getMonth() + 1;
             const d = date.getDate();
@@ -424,10 +470,17 @@
             }
 
             const data = fortuneData.find(item => item.sun === sun && item.moon === moon) || {tagline:"神秘の境界線", details:["特別な星の配置"], quote:"そのままの君で"};
-            document.getElementById('result-display').style.display = 'block';
+            
+            const resultDiv = document.getElementById('result-display');
+            resultDiv.style.display = 'block';
+            resultDiv.classList.remove('fade-in');
+            void resultDiv.offsetWidth; // リフロー強制でアニメーション再起動
+            resultDiv.classList.add('fade-in');
+
             document.getElementById('res-signs').innerText = `${sun} × ${moon}`;
             document.getElementById('res-tagline').innerText = data.tagline;
             document.getElementById('res-quote').innerText = `「${data.quote}」`;
+            
             const list = document.getElementById('res-details');
             list.innerHTML = "";
             data.details.forEach(text => {
@@ -435,9 +488,18 @@
                 li.innerText = text;
                 list.appendChild(li);
             });
+
             if (window.innerWidth <= 700) {
-                document.getElementById('result-display').scrollIntoView({ behavior: 'smooth' });
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        function shareX() {
+            const signs = document.getElementById('res-signs').innerText;
+            const tagline = document.getElementById('res-tagline').innerText;
+            const text = encodeURIComponent(`私の魂の傾向は【${signs}】${tagline}でした。 #CosmicTendency`);
+            const url = `https://twitter.com/intent/tweet?text=${text}`;
+            window.open(url, '_blank');
         }
 
         function toggleMusic() {
@@ -463,34 +525,14 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        document.addEventListener("visibilitychange", () => {
-            const music = document.getElementById('bgm');
-            if (document.hidden) {
-                music.pause();
-            } else {
-                if (!isMutedManually && document.getElementById('result-display').style.display === 'block') {
-                    music.play().catch(() => {});
-                }
-            }
-        });
-
+        /* --- 訪問カウント --- */
         (function() {
             try {
                 let count = localStorage.getItem('visitCount') || 0;
                 count = parseInt(count) + 1;
                 localStorage.setItem('visitCount', count);
                 const counterEl = document.getElementById('counter');
-                if (!counterEl) return;
-                const isLucky = (n) => {
-                    if (n === 7) return true;
-                    const s = n.toString();
-                    return s.length > 1 && s.split('').every(char => char === s[0]);
-                };
-                if (isLucky(count)) {
-                    counterEl.innerHTML = `<span class="lucky-hit">✦ Special Visit: ${count} ✦</span>`;
-                } else {
-                    counterEl.innerText = `Visit: ${count}`;
-                }
+                counterEl.innerText = `Visit: ${count}`;
             } catch (e) {}
         })();
     </script>
