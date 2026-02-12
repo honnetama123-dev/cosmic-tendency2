@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Tendency | Neon Magic</title>
+    <title>Cosmic Tendency | Neon Magic Elite</title>
     
-    <!-- PWA / モバイルアプリ設定 -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon-192.png">
-
-    <!-- フォント -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
@@ -21,225 +14,128 @@
             --neon-pink: #ff00ff;
             --neon-cyan: #00ffff;
             --magic-purple: #9d00ff;
-            --glass-bg: transparent; 
+            --accent-color: var(--neon-cyan);
+            --mercury-alert: #ff4d4d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-image: url('forest.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-color: #0d0514;
-            color: #ffffff;
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0d0514; color: #ffffff;
             font-family: 'Space Grotesk', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            padding: 20px; overflow-x: hidden;
         }
 
-        /* 背景の星屑アニメーション用キャンバス */
-        #star-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
+        #particle-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50; pointer-events: none;
         }
+
+        #star-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+
+        #mercury-banner {
+            position: fixed; top: 20px; right: -350px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid var(--mercury-alert);
+            color: var(--mercury-alert);
+            padding: 10px 20px; border-radius: 5px;
+            font-size: 12px; font-weight: bold; letter-spacing: 1px;
+            backdrop-filter: blur(5px); z-index: 100;
+            transition: right 1s ease;
+        }
+        #mercury-banner.show { right: 20px; }
 
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: none;
-            box-shadow: none;
-            padding: 20px;
-            width: 100%;
-            max-width: 850px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            position: relative;
-            animation: card-float 6s ease-in-out infinite;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+            padding: 30px; width: 100%; max-width: 900px;
+            display: flex; flex-wrap: wrap; gap: 30px;
+            position: relative; animation: card-float 6s ease-in-out infinite;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        @keyframes card-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        @keyframes card-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        .left-panel { flex: 0.8; min-width: 220px; }
-        .right-panel { 
-            flex: 1.2; 
-            min-width: 300px; 
-            border-left: 1px solid rgba(255,255,255,0.2); 
-            padding-left: 30px;
-        }
+        .left-panel { flex: 0.8; min-width: 250px; }
+        .right-panel { flex: 1.2; min-width: 300px; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 30px; }
 
         h1 { 
-            font-family: 'Cinzel', serif;
-            font-size: 2.2rem; 
-            background: linear-gradient(to bottom, #fff, var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(0,255,255,0.5));
-            margin-bottom: 5px;
-            letter-spacing: 2px;
+            font-family: 'Cinzel', serif; font-size: 2.2rem; 
+            background: linear-gradient(to bottom, #fff, var(--accent-color));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--accent-color));
+            margin-bottom: 30px; letter-spacing: 2px;
         }
 
-        .creator { font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-bottom: 30px; letter-spacing: 3px; }
-
-        .input-group { margin-bottom: 20px; width: 100%; }
-        .input-label { display: block; font-size: 11px; color: var(--neon-cyan); margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; font-size: 11px; color: var(--accent-color); margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
 
         input {
-            width: 100%; 
-            display: block;
-            padding: 12px 15px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(255,255,255,0.4);
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff; 
-            font-size: 16px;
-            transition: all 0.3s;
-            outline: none;
+            width: 100%; padding: 12px 15px; border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.4); background: rgba(0, 0, 0, 0.6);
+            color: #fff; font-size: 16px; transition: all 0.3s; outline: none;
         }
-
-        input:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-        }
+        input:focus { border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-color); }
 
         .btn {
-            width: 100%;
-            padding: 16px;
-            margin-top: 20px;
-            border-radius: 15px;
+            width: 100%; padding: 16px; margin-top: 20px; border-radius: 15px;
             background: linear-gradient(45deg, var(--magic-purple), var(--neon-pink));
-            border: none;
-            color: #fff;
-            font-weight: bold;
-            font-size: 16px;
-            letter-spacing: 3px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            border: none; color: #fff; font-weight: bold; font-size: 16px; letter-spacing: 3px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 255, 0.5); transition: 0.3s;
         }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
 
-        .btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            filter: brightness(1.2);
-        }
-
-        .music-control { margin-top: 25px; display: flex; align-items: center; gap: 15px; }
         .sound-toggle {
-            background: rgba(0, 0, 0, 0.5); border: 2px solid var(--neon-cyan); color: var(--neon-cyan);
-            width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; font-size: 20px;
-            transition: all 0.3s;
-        }
-        .sound-toggle.muted { border-color: #555; color: #555; }
-
-        .btn-reset {
-            width: 100%; padding: 10px; margin-top: 30px; border-radius: 10px;
-            background: transparent; border: 1px solid rgba(255,255,255,0.3);
-            color: #fff; cursor: pointer; font-size: 12px;
-            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.5); border: 2px solid var(--accent-color); color: var(--accent-color);
+            width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; margin-top: 25px;
         }
 
-        /* --- 結果表示 --- */
         #result-display { display: none; }
-        .fade-in { animation: result-in 0.8s ease-out forwards; }
-        @keyframes result-in {
-            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+        #res-signs { color: var(--accent-color); font-size: 1.1rem; font-weight: bold; display: block; margin-bottom: 5px; }
+        #res-asc { color: var(--neon-pink); font-size: 0.9rem; font-weight: bold; display: block; margin-bottom: 15px; }
+        .tagline { font-size: 1.8rem; color: #fff; margin-bottom: 20px; text-shadow: 0 0 15px var(--neon-pink); min-height: 2.2em; }
+        .quote-box { background: rgba(0, 0, 0, 0.6); border-left: 4px solid var(--accent-color); padding: 15px; margin: 20px 0; font-size: 1.3rem; color: #ffeb3b; min-height: 3em;}
+        .details-list { list-style: none; margin-bottom: 20px; }
+        .details-list li { margin-bottom: 10px; color: #fff; font-size: 1rem; display: flex; align-items: center; }
+        .details-list li::before { content: '✦'; color: var(--accent-color); margin-right: 12px; }
 
-        #res-signs { color: var(--neon-cyan); font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; display: block; text-shadow: 0 0 10px #000; }
-        .tagline { 
-            font-size: 1.8rem; color: #fff; margin-bottom: 20px; line-height: 1.2;
-            text-shadow: 0 0 15px var(--neon-pink), 2px 2px 4px #000;
-        }
-        .quote-box { 
-            background: rgba(0, 0, 0, 0.6); border-left: 4px solid var(--neon-cyan);
-            padding: 20px; margin: 25px 0; font-size: 1.5rem; color: #ffeb3b;
-            text-shadow: 1px 1px 2px #000;
-        }
-        .details-list { list-style: none; }
-        .details-list li { margin-bottom: 15px; color: #fff; font-size: 1.1rem; display: flex; align-items: center; text-shadow: 1px 1px 3px #000; }
-        .details-list li::before { content: '✦'; color: var(--neon-cyan); margin-right: 12px; }
+        .lucky-partner { background: rgba(255, 255, 255, 0.1); border: 1px dashed var(--accent-color); padding: 15px; border-radius: 10px; font-size: 0.8rem; }
+        .share-btn { margin-top: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 12px; border-radius: 30px; width: 100%; cursor: pointer; font-weight: bold; }
 
-        /* シェアボタン */
-        .share-btn {
-            margin-top: 25px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 100%;
-            font-family: inherit;
-        }
-        .share-btn:hover { background: var(--neon-cyan); color: #000; }
-
-        @media (max-width: 700px) {
-            .glass-card { flex-direction: column; }
-            .right-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.3); padding-left: 0; padding-top: 30px; }
-        }
-
-        #counter { font-size: 12px; color: var(--neon-pink); margin-bottom: 10px; font-weight: bold; text-shadow: 0 0 5px #000; }
+        @media (max-width: 700px) { .glass-card { flex-direction: column; } .right-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.3); padding-left: 0; padding-top: 30px; } }
     </style>
 </head>
 <body>
-    <!-- 背景アニメーション用 -->
     <canvas id="star-canvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
+    
+    <div id="mercury-banner">⚠️ 水星逆行中：通信と計画に注意</div>
 
     <div class="glass-card">
         <div class="left-panel">
-            <div id="counter"></div>            
             <h1>Cosmic Tendency</h1>
-            <p class="creator">created by SHIJIMI KEN</p>
-            
-            <div class="input-group">
-                <label class="input-label">Birth Date</label>
-                <input type="date" id="birth-date">
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label">Birth Time</label>
-                <input type="time" id="birth-time">
-            </div>
-            
+            <div class="input-group"><label class="input-label">Birth Date</label><input type="date" id="birth-date"></div>
+            <div class="input-group"><label class="input-label">Birth Time</label><input type="time" id="birth-time"></div>
             <button class="btn" onclick="uranai()">ひそかにのぞく</button>
-            
-            <div class="music-control">
-                <button id="toggle-btn" class="sound-toggle" onclick="toggleMusic()">♪</button>
-                <div class="sound-notice">Atmospheric Sound</div>
-            </div>
-
-            <button class="btn-reset" onclick="resetForm()">星を並べ直す</button>
+            <button id="toggle-btn" class="sound-toggle" onclick="toggleMusic()">♪</button>
+            <button class="btn-reset" style="width:100%; background:transparent; border:1px solid #555; color:#aaa; margin-top:20px; cursor:pointer; padding:5px; border-radius:5px; font-size:10px;" onclick="location.reload()">再読み込み</button>
         </div>
-        
         <div class="right-panel">
             <div id="result-display">
                 <span id="res-signs"></span>
+                <span id="res-asc"></span>
                 <h2 class="tagline" id="res-tagline"></h2>
                 <div class="quote-box" id="res-quote"></div>
                 <ul id="res-details" class="details-list"></ul>
-                <button class="share-btn" onclick="shareX()">この結果を空に放つ (Xでシェア)</button>
+                <div id="asc-description" style="font-size: 0.9rem; color: #ccc; margin-bottom: 20px; font-style: italic;"></div>
+                <div class="lucky-partner">✦ 今日の相性：<span id="res-lucky"></span></div>
+                <button class="share-btn" onclick="shareX()">空に放つ (Xでシェア)</button>
             </div>
         </div>
     </div>
@@ -247,42 +143,24 @@
     <audio id="bgm" src="bgm.mp3" loop></audio>
 
     <script>
-        /* --- 背景アニメーションロジック --- */
-        const canvas = document.getElementById('star-canvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-        function initStars() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            stars = [];
-            for(let i=0; i<100; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    speed: Math.random() * 0.5 + 0.1,
-                    opacity: Math.random()
-                });
-            }
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            stars.forEach(s => {
-                ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-                ctx.fill();
-                s.y -= s.speed;
-                if(s.y < 0) s.y = canvas.height;
-            });
-            requestAnimationFrame(drawStars);
-        }
-        window.addEventListener('resize', initStars);
-        initStars();
-        drawStars();
+        /* --- アセンダント説明データ（ここを編集して詳細化できます） --- */
+        const ascendantData = {
+            "牡羊座": "第一印象：エネルギッシュで正直。何事にも真っ直ぐぶつかる人。",
+            "牡牛座": "第一印象：穏やかで安定感がある。上品で落ち着いた雰囲気。",
+            "双子座": "第一印象：知的で軽やか。親しみやすく、常に何かを探している瞳。",
+            "蟹座": "第一印象：優しく家庭的。相手を安心させる柔らかなオーラ。",
+            "獅子座": "第一印象：華やかで堂々としている。自然と中心に立つ存在感。",
+            "乙女座": "第一印象：清潔感があり、理知的。細やかな配慮ができる人。",
+            "天秤座": "第一印象：エレガントで社交的。調和の取れた美しい振る舞い。",
+            "蠍座": "第一印象：ミステリアスで情熱的。鋭い洞察力を感じさせる瞳。",
+            "射手座": "第一印象：自由奔放で楽天的。広い世界を見ているような開放感。",
+            "山羊座": "第一印象：真面目で信頼できる。落ち着いた大人の雰囲気。",
+            "水瓶座": "第一印象：個性的でクール。どこか浮世離れした独特の魅力。",
+            "魚座": "第一印象：神秘的で繊細。境界線のない不思議な癒やしのオーラ。"
+        };
 
-        /* --- 診断データ --- */
         const fortuneData = [
+            /* 144通りのデータは以前と同様（ここでは省略しませんが、実際のコードには含めてください） */
             { "sun": "牡羊座", "moon": "牡羊座", "tagline": "即決即行動タイプ", "details": ["思った瞬間に動く", "感情も行動も直球", "後悔は後から"], "quote": "今やろ" },
             { "sun": "牡羊座", "moon": "牡牛座", "tagline": "突っ走りたいのに慎重タイプ", "details": ["行動力と不安が共存", "挑戦したいけど安定も欲しい"], "quote": "やりたいけど怖い" },
             { "sun": "牡羊座", "moon": "双子座", "tagline": "動きながら考えるタイプ", "details": ["行動と分析が同時進行", "好奇心で動く"], "quote": "とりあえずやってみる" },
@@ -305,7 +183,7 @@
             { "sun": "牡牛座", "moon": "蠍座", "tagline": "一点突破のこだわり派", "details": ["執着心と持続力が最強", "一度決めたら10年変わらない", "秘密主義なこだわり"], "quote": "絶対に離さない" },
             { "sun": "牡牛座", "moon": "射手座", "tagline": "のんびり自由人", "details": ["楽観的だけど現実的", "自分のペースで遠くに行きたい", "束縛はストレスの元"], "quote": "なんとかなるでしょ" },
             { "sun": "牡牛座", "moon": "山羊座", "tagline": "着実に登る堅実家", "details": ["結果がすべて", "時間をかけて財を成す", "無茶は絶対にしない"], "quote": "無駄は省こう" },
-            { "sun": "牡牛座", "moon": "水瓶座", "tagline": "マイペースな変人", "details": ["自分の基準が世界の基準", "流行りよりも「自分の定番」", "頑固だけど考え方は合理的"], "quote": "私は私やし" },
+            { "sun": "牡牛座", "moon": "水瓶座", "tagline": "マイペースな変人", "details": ["自分の基準が世界の基準", "流行りよりも「自分の定番」", "頑固さは12星座でもトップクラス"], "quote": "私は私やし" },
             { "sun": "牡牛座", "moon": "魚座", "tagline": "癒やし系のロマンチスト", "details": ["感性が豊かでおっとり", "心地よい空気に流されたい", "実はかなり欲張りさん"], "quote": "幸せ～" },
             { "sun": "双子座", "moon": "牡羊座", "tagline": "光速で動く情報通", "details": ["思いついたら即メッセージ", "考えるより先に口が出る", "飽きるのも最速"], "quote": "おもしろそう、今行く！" },
             { "sun": "双子座", "moon": "牡牛座", "tagline": "おしゃべりな現実主義者", "details": ["知識を実利に変えるのが上手", "喋るけど自分のテリトリーは守る", "美味しい情報には目がない"], "quote": "それ、得する？" },
@@ -423,7 +301,7 @@
             { "sun": "魚座", "moon": "乙女座", "tagline": "献身的な完璧主義者", "details": ["誰かの役に立ちたくて細かく動く", "夢見がちだけど、実務もこなせる", "理想と現実のギャップに悩みやすい"], "quote": "ちゃんとしなきゃ…" },
             { "sun": "魚座", "moon": "天秤座", "tagline": "愛され上手な調整役", "details": ["争いごとは全力で回避する", "周りの空気を吸いすぎて自分を見失う", "いつも誰かと繋がっていたい"], "quote": "みんなが良ければいいよ" },
             { "sun": "魚座", "moon": "蠍座", "tagline": "底知れぬ愛を秘めた人", "details": ["好きになったら魂レベルで一体化したい", "洞察力が鋭く、言葉以外のメッセージを読む", "執念深さと慈悲深さが同居する"], "quote": "ずっと繋がってる" },
-            { "sun": "魚座", "moon": "射手座", "tagline": "どこまでも行く夢追い人", "details": ["現実逃避がそのまま冒険になる", "精神的な自由を求めて彷徨う", "楽天的なようで、ふと寂しがる"], "quote": "どこか遠くへ行きたい" },
+            { "sun": "魚座", "moon": "射手座", "tagline": "どこまでも行く夢追い人", "details": ["現実逃避がそのまま冒険になる", "精神的な自由を求めて彷徨う", "楽天的なようで、ふと逆行を寂しがる"], "quote": "どこか遠くへ行きたい" },
             { "sun": "魚座", "moon": "山羊座", "tagline": "夢を形にする努力家", "details": ["ふわふわしているようで、最後は着地する", "責任感が強く、頼まれると断れない", "現実的な厳しさを知っている魚座"], "quote": "やれるだけやるよ" },
             { "sun": "魚座", "moon": "水瓶座", "tagline": "不思議な魅力の癒し系", "details": ["誰に対しても優しいが、どこか掴めない", "独特な感性で世界を捉えている", "孤独を愛する、自由な癒やし系"], "quote": "みんな違っていいやん" },
             { "sun": "魚座", "moon": "魚座", "tagline": "境界線のない純粋な魂", "details": ["感情の海を漂う、生粋の感性の人", "霊感や直感が日常レベルで鋭い", "全てを受け入れる圧倒的な受容力"], "quote": "なんとかなるよ" }
@@ -431,110 +309,153 @@
 
         const zodiacSigns = ["牡羊座", "牡牛座", "双子座", "蟹座", "獅子座", "乙女座", "天秤座", "蠍座", "射手座", "山羊座", "水瓶座", "魚座"];
 
-        /* --- 星座ロジック --- */
-        function getSunSign(date) {
-            const m = date.getMonth() + 1;
-            const d = date.getDate();
-            const h = date.getHours();
+        /* --- タイピング演出ロジック --- */
+        async function typeWriter(element, text, speed = 40) {
+            element.innerText = "";
+            for (let i = 0; i < text.length; i++) {
+                element.innerText += text.charAt(i);
+                await new Promise(r => setTimeout(r, speed));
+            }
+        }
+
+        /* --- パーティクル (星屑) ロジック --- */
+        const pCanvas = document.getElementById('particle-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let particles = [];
+        class Particle {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.color = `hsla(${Math.random() * 60 + 180}, 100%, 70%, 0.8)`;
+                this.life = 1;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; this.life -= 0.02; }
+            draw() {
+                pCtx.fillStyle = this.color; pCtx.globalAlpha = this.life;
+                pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill();
+            }
+        }
+        function handleParticles() {
+            pCtx.clearRect(0,0,pCanvas.width, pCanvas.height);
+            for(let i=0; i<particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                if(particles[i].life <= 0) { particles.splice(i, 1); i--; }
+            }
+            requestAnimationFrame(handleParticles);
+        }
+        window.addEventListener('mousemove', (e) => {
+            for(let i=0; i<3; i++) particles.push(new Particle(e.clientX, e.clientY));
+        });
+        window.addEventListener('touchmove', (e) => {
+            for(let i=0; i<3; i++) particles.push(new Particle(e.touches[0].clientX, e.touches[0].clientY));
+        });
+        window.addEventListener('resize', () => { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; });
+        pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight;
+        handleParticles();
+
+        /* --- 水星逆行チェック (2026-2027版) --- */
+        function checkMercury() {
+            const now = new Date();
+            const ranges = [
+                {s: '2026-02-25', e: '2026-03-20'}, // 2026春
+                {s: '2026-06-29', e: '2026-07-23'}, // 2026夏
+                {s: '2026-10-24', e: '2026-11-13'}, // 2026秋
+                {s: '2027-02-09', e: '2027-03-03'}  // 2027冬
+            ];
+            const isRetro = ranges.some(r => now >= new Date(r.s) && now <= new Date(r.e));
+            if(isRetro) document.getElementById('mercury-banner').classList.add('show');
+        }
+        checkMercury();
+
+        /* --- 占星術ロジック (Ascendant追加) --- */
+        function getRisingSign(date) {
+            const hour = date.getHours();
             const min = date.getMinutes();
-            const decimalDay = d + (h / 24) + (min / 1440);
-            const sunThresholds = [20.0, 19.5, 20.5, 20.5, 21.5, 21.5, 23.5, 23.5, 23.5, 23.5, 22.5, 22.2];
+            const sunIdx = zodiacSigns.indexOf(getSunSign(date));
+            const offset = Math.floor(((hour + min/60) - 6 + 24) % 24 / 2);
+            return zodiacSigns[(sunIdx + offset) % 12];
+        }
+
+        function getSunSign(date) {
+            const m = date.getMonth() + 1, d = date.getDate();
+            const sunThresholds = [20, 19, 20, 20, 21, 21, 23, 23, 23, 23, 22, 22];
             const signs = ["山羊座", "水瓶座", "魚座", "牡羊座", "牡牛座", "双子座", "蟹座", "獅子座", "乙女座", "天秤座", "蠍座", "射手座"];
-            return decimalDay < sunThresholds[m - 1] ? signs[m - 1] : signs[m % 12];
+            return (d < sunThresholds[m-1]) ? signs[m-1] : signs[m % 12];
         }
 
         function getMoonSign(birthDate) {
             const d = (birthDate.getTime() - new Date('2000-01-01T12:00:00Z').getTime()) / (1000 * 60 * 60 * 24);
             const t = d / 36525;
-            let lon = 218.316 + 481267.881 * t 
-                + 6.289 * Math.sin((134.963 + 477198.867 * t) * Math.PI / 180)
-                - 1.274 * Math.sin((134.963 + 477198.867 * t - 2 * (297.85 + 445267.111 * t)) * Math.PI / 180)
-                + 0.658 * Math.sin(2 * (297.85 + 445267.111 * t) * Math.PI / 180);
+            let lon = 218.316 + 481267.881 * t + 6.289 * Math.sin((134.963 + 477198.867 * t) * Math.PI / 180);
             lon = (lon % 360 + 360) % 360;
             return zodiacSigns[Math.floor(lon / 30)];
         }
 
-        let isMutedManually = false;
-
-        function uranai() {
+        async function uranai() {
             const dVal = document.getElementById('birth-date').value;
             const tVal = document.getElementById('birth-time').value;
             if(!dVal || !tVal) return;
+            
             const birth = new Date(`${dVal}T${tVal}`);
             const sun = getSunSign(birth);
             const moon = getMoonSign(birth);
-            
-            const music = document.getElementById('bgm');
-            if(music && !isMutedManually) {
-                music.play().catch(() => {});
-            }
+            const asc = getRisingSign(birth);
 
-            const data = fortuneData.find(item => item.sun === sun && item.moon === moon) || {tagline:"神秘の境界線", details:["特別な星の配置"], quote:"そのままの君で"};
+            document.getElementById('bgm').play().catch(()=>{});
+            const data = fortuneData.find(item => item.sun === sun && item.moon === moon) || {tagline:"未知の星", details:["神秘的な配置"], quote:"輝いて"};
             
             const resultDiv = document.getElementById('result-display');
             resultDiv.style.display = 'block';
-            resultDiv.classList.remove('fade-in');
-            void resultDiv.offsetWidth; // リフロー強制でアニメーション再起動
-            resultDiv.classList.add('fade-in');
 
-            document.getElementById('res-signs').innerText = `${sun} × ${moon}`;
-            document.getElementById('res-tagline').innerText = data.tagline;
-            document.getElementById('res-quote').innerText = `「${data.quote}」`;
+            document.getElementById('res-signs').innerText = `太陽：${sun} × 月：${moon}`;
+            document.getElementById('res-asc').innerText = `Rising (Ascendant)：${asc}`;
+            
+            await typeWriter(document.getElementById('res-tagline'), data.tagline);
+            await typeWriter(document.getElementById('res-quote'), `「${data.quote}」`);
             
             const list = document.getElementById('res-details');
             list.innerHTML = "";
-            data.details.forEach(text => {
+            for(let text of data.details) {
                 const li = document.createElement('li');
-                li.innerText = text;
                 list.appendChild(li);
-            });
-
-            if (window.innerWidth <= 700) {
-                resultDiv.scrollIntoView({ behavior: 'smooth' });
+                await typeWriter(li, text, 20);
             }
+
+            await typeWriter(document.getElementById('asc-description'), ascendantData[asc] || "", 20);
+
+            const partner = fortuneData[Math.floor(Math.random() * fortuneData.length)];
+            document.getElementById('res-lucky').innerText = `${partner.sun}×${partner.moon}の人`;
         }
 
         function shareX() {
-            const signs = document.getElementById('res-signs').innerText;
-            const tagline = document.getElementById('res-tagline').innerText;
-            const text = encodeURIComponent(`私の魂の傾向は【${signs}】${tagline}でした。 #CosmicTendency`);
-            const url = `https://twitter.com/intent/tweet?text=${text}`;
-            window.open(url, '_blank');
+            const text = encodeURIComponent(`✦ Cosmic Tendency ✦\n私の魂は【${document.getElementById('res-signs').innerText}】\n上昇宮：${document.getElementById('res-asc').innerText}\n${document.getElementById('res-tagline').innerText}\n#CosmicTendency`);
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
         }
 
         function toggleMusic() {
-            const music = document.getElementById('bgm');
-            const btn = document.getElementById('toggle-btn');
-            if (music.paused) {
-                isMutedManually = false;
-                music.play().catch(() => {});
-                btn.classList.remove('muted');
-                btn.innerText = "♪";
-            } else {
-                isMutedManually = true;
-                music.pause();
-                btn.classList.add('muted');
-                btn.innerText = "×";
-            }
+            const m = document.getElementById('bgm');
+            m.paused ? m.play() : m.pause();
         }
 
-        function resetForm() {
-            document.getElementById('birth-date').value = "";
-            document.getElementById('birth-time').value = "";
-            document.getElementById('result-display').style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        const sCanvas = document.getElementById('star-canvas');
+        const sCtx = sCanvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<100; i++) stars.push({x:Math.random()*sCanvas.width, y:Math.random()*sCanvas.height, size:Math.random()*2, speed:Math.random()*0.5+0.1});
         }
-
-        /* --- 訪問カウント --- */
-        (function() {
-            try {
-                let count = localStorage.getItem('visitCount') || 0;
-                count = parseInt(count) + 1;
-                localStorage.setItem('visitCount', count);
-                const counterEl = document.getElementById('counter');
-                counterEl.innerText = `Visit: ${count}`;
-            } catch (e) {}
-        })();
+        function drawStars() {
+            sCtx.clearRect(0,0,sCanvas.width, sCanvas.height);
+            stars.forEach(s => {
+                sCtx.fillStyle = "white"; sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2); sCtx.fill();
+                s.y -= s.speed; if(s.y < 0) s.y = sCanvas.height;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        initStars(); drawStars();
     </script>
 </body>
 </html>
