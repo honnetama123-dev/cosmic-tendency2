@@ -128,12 +128,41 @@
         .lucky-partner { background: rgba(0, 0, 0, 0.4); border: 1px dashed var(--accent-color); padding: 15px; border-radius: 10px; font-size: 0.8rem; text-shadow: 1px 1px 2px #000; }
         .share-btn { margin-top: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--accent-color); color: var(--accent-color); padding: 12px; border-radius: 30px; width: 100%; cursor: pointer; font-weight: bold; }
 
+        /* 姉妹サイトリンクのデザイン追加 */
+        .sister-sites {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .sister-link {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            letter-spacing: 1px;
+        }
+        .sister-link:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+            transform: translateX(5px);
+        }
+        .sister-link::before {
+            content: '✦';
+            margin-right: 10px;
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
         @media (max-width: 700px) { 
             .glass-card { flex-direction: column; gap: 20px; } 
             .right-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.3); padding-left: 0; padding-top: 30px; } 
         }
 
-        /* クレジット表記（真ん中下・2行） */
         .credits {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 3px;
@@ -156,6 +185,13 @@
             <button class="btn" onclick="uranai()">ひそかにのぞく</button>
             <button id="toggle-btn" class="sound-toggle" onclick="toggleMusic()">♪</button>
             <button class="btn-reset" style="width:100%; background:transparent; border:1px solid #444; color:#666; margin-top:20px; cursor:pointer; padding:5px; border-radius:5px; font-size:10px;" onclick="location.reload()">再読み込み</button>
+
+            <!-- 姉妹サイトリンク -->
+            <div class="sister-sites">
+                <label class="input-label" style="font-size: 9px; opacity: 0.5;">Sister Sites</label>
+                <a href="https://etoile-tendency-oo8b.vercel.app/" target="_blank" class="sister-link">星の花園タロット</a>
+                <a href="https://honnetama123-dev.github.io/aster-tendency/" target="_blank" class="sister-link">太陽×数秘</a>
+            </div>
         </div>
         <div class="right-panel">
             <div id="result-display">
@@ -171,7 +207,6 @@
         </div>
     </div>
 
-    <!-- クレジット表記 -->
     <div class="credits">
         created by<br>SHIJIMI KEN
     </div>
@@ -195,7 +230,6 @@
         };
 
         const fortuneData = [
-            /* 144通りのデータはここに含まれます（既存のものをそのまま保持） */
             { "sun": "牡羊座", "moon": "牡羊座", "tagline": "即決即行動タイプ", "details": ["思った瞬間に動く", "感情も行動も直球", "後悔は後から"], "quote": "今やろ" },
             { "sun": "牡羊座", "moon": "牡牛座", "tagline": "突っ走りたいのに慎重タイプ", "details": ["行動力と不安が共存", "挑戦したいけど安定も欲しい"], "quote": "やりたいけど怖い" },
             { "sun": "牡羊座", "moon": "双子座", "tagline": "動きながら考えるタイプ", "details": ["行動と分析が同時進行", "好奇心で動く"], "quote": "とりあえずやってみる" },
@@ -326,7 +360,7 @@
             { "sun": "水瓶座", "moon": "蠍座", "tagline": "信念を曲げない一匹狼", "details": ["内面に激しい情熱と独自の理論を持つ", "馴れ合いを嫌い, 真実だけを求める", "徹底的に突き詰めるオタク気質"], "quote": "群める必要ある？" },
             { "sun": "水瓶座", "moon": "射手座", "tagline": "思考が宇宙へ飛ぶ自由人", "details": ["常識や国境すらも軽々と越えていく", "未来のことしか考えていない", "束縛されたら一瞬で消える"], "quote": "もっと自由にいこう" },
             { "sun": "水瓶座", "moon": "山羊座", "tagline": "現実的な革命家", "details": ["理想を形にするための戦略を持つ", "社会をアップデートしたい野心家", "意外と礼儀正しく, かつドライ"], "quote": "新しい仕組みを作ろう" },
-            { "sun": "水瓶座", "moon": "水瓶座", "tagline": "生粋の宇宙人タイプ", "details": ["自分の世界観が完璧に完成されている", "「普通」が何か理解できない", "100年先を見ている先駆者"], "quote": "それ変やん？" },
+            { "sun": "水瓶座", "moon": "水瓶座", "tagline": "生粋 of 宇宙人タイプ", "details": ["自分の世界観が完璧に完成されている", "「普通」が何か理解できない", "100年先を見ている先駆者"], "quote": "それ変やん？" },
             { "sun": "水瓶座", "moon": "魚座", "tagline": "不思議な魅力の癒し手", "details": ["理想主義で, 世界平和を本気で願う", "掴みどころがないミステリアスな人", "直感で動く, 感性の人"], "quote": "なんとかなるよ" },
             { "sun": "魚座", "moon": "牡羊座", "tagline": "直感で動く熱き夢想家", "details": ["根拠はないけど「いける」と信じる", "傷つきやすいが立ち直りも早い", "守りたい人のために豹変する"], "quote": "今, そう思った" },
             { "sun": "魚座", "moon": "牡牛座", "tagline": "心地よさを愛するロマンチスト", "details": ["綺麗な景色, 美味しい食事が癒やし", "おっとりしているが, 欲張りな一面も", "自分の好きな世界をコツコツ作る"], "quote": "幸せやな～" },
@@ -380,9 +414,6 @@
         }
         window.addEventListener('mousemove', (e) => {
             for(let i=0; i<2; i++) particles.push(new Particle(e.clientX, e.clientY));
-        });
-        window.addEventListener('touchmove', (e) => {
-            for(let i=0; i<2; i++) particles.push(new Particle(e.touches[0].clientX, e.touches[0].clientY));
         });
         window.addEventListener('resize', () => { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; });
         pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight;
